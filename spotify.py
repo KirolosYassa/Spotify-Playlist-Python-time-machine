@@ -17,8 +17,11 @@ class Spotify:
         self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id = self.CLIENT_ID,
                                                     client_secret = self.CLIENT_SECRET,
                                                     redirect_uri = "https://example.com",
-                                                    scope="user-library-read"))
+                                                    # scope="user-library-read",
+                                                    scope='playlist-modify-public' ))
         self.songs_list = []
+        self.user_id = self.sp.current_user () ['id']
+        
         # results = self.sp.current_user_saved_tracks()
         # for idx, item in enumerate(results['items']):
         #     track = item['track']
@@ -32,7 +35,7 @@ class Spotify:
     def search_a_song_URIs(self, time_line, song_name):
         year = time_line.split("-")[0]
         q = f"{song_name} year:{year}"
-        # q = f"{song_name} "
+        q = f"{song_name} "
         song_result = self.sp.search(q, limit=1, offset=0, type='track', market=None)
         song_URI = song_result["tracks"]["items"][0]['external_urls']["spotify"]
         song_URI = song_URI.split("/")[4]
@@ -48,8 +51,8 @@ class Spotify:
 
     def create_playlist(self,timeline, songs_list):
         # Create playlist
-        playlist = self.sp.user_playlist_create(self.CLIENT_ID, name = f"{timeline} BillBoard 100", public=True, collaborative=False, description=f'This playlist contains the first Hot 100 songs at {timeline}')
-        print(playlist)
+        playlist = self.sp.user_playlist_create(user= self.user_id, name = f"{timeline} BillBoard 100", public=True, collaborative=False, description=f'This playlist contains the first Hot 100 songs at {timeline}')
+        # print(playlist) 
         playlist_id = playlist ["id"]
         
         # Search for the URL of each song in the Songs List 
@@ -62,5 +65,6 @@ class Spotify:
         self.sp.playlist_add_items(playlist_id, songs_list_URIs, position=None)
      
 
-spotify = Spotify()
-spotify.search_a_song_URIs(song_name="Oklahoma", time_line= "2000-12-12")
+# spotify = Spotify()
+# # spotify.search_a_song_URIs(song_name="Oklahoma", time_line= "2000-12-12")
+# spotify.create_playlist(timeline = "2000-12-12", songs_list= ["ستو أنا", "El Haraka de"])

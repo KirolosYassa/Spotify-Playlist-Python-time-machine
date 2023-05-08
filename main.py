@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from spotify import *
 
-isTestMode = True
+isTestMode = False
 
 if isTestMode:
     test_case_date = "2000-12-12"
